@@ -1,0 +1,57 @@
+FROM alpine:3.10
+LABEL maintainer=liyongjian5179
+
+# Java Version and other ENV
+ENV JAVA_HOME=/usr/local/java \
+    PATH=${PATH}:/usr/local/java/bin \
+    GLIBC_VERSION=2.30-r0
+
+RUN cd /usr/local && \
+    wget  --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz && \
+    tar xf jdk-8u131-linux-x64.tar.gz  && \
+    mv jdk1.8.0_131 java && \
+    apk update && \
+    apk upgrade  &&\
+    wget  -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub &&\
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-2.30-r0.apk &&\
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-bin-2.30-r0.apk &&\
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-i18n-2.30-r0.apk &&\
+    apk add --no-cache glibc-${GLIBC_VERSION}.apk glibc-bin-${GLIBC_VERSION}.apk glibc-i18n-${GLIBC_VERSION}.apk &&\
+    sleep 2 &&\
+    /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 &&\
+    rm -rf /usr/local/java/*src.zip \
+           /usr/local/java/lib/missioncontrol \
+           /usr/local/java/lib/visualvm \
+           /usr/local/java/lib/*javafx* \
+           /usr/local/java/jre/plugin \
+           /usr/local/java/jre/bin/javaws \
+           /usr/local/java/jre/bin/jjs \
+           /usr/local/java/jre/bin/orbd \
+           /usr/local/java/jre/bin/pack200 \
+           /usr/local/java/jre/bin/policytool \
+           /usr/local/java/jre/bin/rmid \
+           /usr/local/java/jre/bin/rmiregistry \
+           /usr/local/java/jre/bin/servertool \
+           /usr/local/java/jre/bin/tnameserv \
+           /usr/local/java/jre/bin/unpack200 \
+           /usr/local/java/jre/lib/javaws.jar \
+           /usr/local/java/jre/lib/deploy* \
+           /usr/local/java/jre/lib/desktop \
+           /usr/local/java/jre/lib/*javafx* \
+           /usr/local/java/jre/lib/*jfx* \
+           /usr/local/java/jre/lib/amd64/libdecora_sse.so \
+           /usr/local/java/jre/lib/amd64/libprism_*.so \
+           /usr/local/java/jre/lib/amd64/libfxplugins.so \
+           /usr/local/java/jre/lib/amd64/libglass.so \
+           /usr/local/java/jre/lib/amd64/libgstreamer-lite.so \
+           /usr/local/java/jre/lib/amd64/libjavafx*.so \
+           /usr/local/java/jre/lib/amd64/libjfx*.so \
+           /usr/local/java/jre/lib/ext/jfxrt.jar \
+           /usr/local/java/jre/lib/ext/nashorn.jar \
+           /usr/local/java/jre/lib/oblique-fonts \
+           /usr/local/java/jre/lib/plugin.jar \
+           /tmp/* /var/cache/apk/*  \
+           jdk-8u131-linux-x64.tar.gz \
+           glibc-$d{GLIBC_VERSION}.apk \
+           glibc-bin-${GLIBC_VERSION}.apk \
+           glibc-i18n-${GLIBC_VERSION}.apk

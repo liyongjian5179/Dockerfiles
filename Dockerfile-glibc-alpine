@@ -1,0 +1,24 @@
+FROM alpine:3.10
+LABEL maintainer=liyongjian5179
+
+ENV GLIBC_VERSION=2.30-r0
+
+RUN set -ex \
+    && apk update  \
+    && apk upgrade  \
+    && wget  -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
+    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-2.30-r0.apk \
+    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-bin-2.30-r0.apk \
+    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-i18n-2.30-r0.apk \
+    && apk add --no-cache \
+           tzdata \
+           glibc-${GLIBC_VERSION}.apk \
+           glibc-bin-${GLIBC_VERSION}.apk \
+           glibc-i18n-${GLIBC_VERSION}.apk \
+    && sleep 2 \
+    && rm -rf /tmp/* /var/cache/apk/* glibc-${GLIBC_VERSION}.apk glibc-bin-${GLIBC_VERSION}.apk glibc-i18n-${GLIBC_VERSION}.apk  \
+    && /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
+
+# Timezone
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone
